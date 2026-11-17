@@ -1,1 +1,488 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на рівень української мови (30 питань, A1–C2)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
+        <!-- Початковий екран -->
+        <div id="welcome-screen" class="text-center">
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-4">Тест на рівень української мови</h1>
+            <p class="text-slate-600 mb-6">Розширена перевірка з 30 питань (по 5 на кожен рівень від A1 до C2): лексика, граматика, синтаксис, стилістика, фразеологія та діалекти.</p>
+            <button onclick="startTest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3.5 rounded-xl transition duration-200 cursor-pointer shadow-sm">Розпочати тест (30 питань)</button>
+        </div>
 
+        <!-- Екран питань -->
+        <div id="quiz-screen" class="hidden">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="progress-indicator" class="text-sm font-medium text-slate-500">Питання 1 із 30</span>
+                    <span id="level-badge" class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full">Рівень A1</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 3.33%"></div>
+                </div>
+            </div>
+
+            <h2 id="question-text" class="text-xl font-bold text-slate-800 mb-6 mt-4"></h2>
+            <div id="options-container" class="space-y-3 mb-6"></div>
+            <button id="next-btn" onclick="nextQuestion()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition duration-200 hidden cursor-pointer">Наступне питання</button>
+        </div>
+
+        <!-- Екран результатів -->
+        <div id="result-screen" class="hidden text-center">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Результати тесту</h2>
+            <p class="text-slate-600 mb-6">Ви відповіли на всі 30 питань!</p>
+            
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-6">
+                <span class="text-sm text-indigo-600 font-medium uppercase tracking-wider">Ваш рівень:</span>
+                <div id="result-level" class="text-4xl font-black text-indigo-900 my-2">--</div>
+                <div id="result-score" class="text-sm font-semibold text-indigo-700 mb-2"></div>
+                <p id="result-description" class="text-slate-700 text-sm"></p>
+            </div>
+
+            <div class="text-left mb-6">
+                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">Деталізація за рівнями:</h3>
+                <div id="breakdown-container" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
+            </div>
+
+            <button onclick="restartTest()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold px-6 py-3 rounded-xl transition duration-200 cursor-pointer">Пройти знову</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // --- A1 (1-5) ---
+            {
+                level: "A1",
+                question: "Як правильно привітатися українською вранці?",
+                options: [
+                    { text: "Доброго ранку!", correct: true },
+                    { text: "Добрий вечір!", correct: false },
+                    { text: "На добраніч!", correct: false },
+                    { text: "Бувайте здорові!", correct: false }
+                ]
+            },
+            {
+                level: "A1",
+                question: "Оберіть правильне закінчення: «Це моя нова ...»",
+                options: [
+                    { text: "книга", correct: true },
+                    { text: "книгу", correct: false },
+                    { text: "книги", correct: false },
+                    { text: "книгою", correct: false }
+                ]
+            },
+            {
+                level: "A1",
+                question: "Як перекладається слово «тиждень»?",
+                options: [
+                    { text: "Неделя", correct: true },
+                    { text: "Месяц", correct: false },
+                    { text: "Выходной", correct: false },
+                    { text: "День", correct: false }
+                ]
+            },
+            {
+                level: "A1",
+                question: "Виберіть правильну форму дієслова: «Вони ... в Києві».",
+                options: [
+                    { text: "живуть", correct: true },
+                    { text: "живе", correct: false },
+                    { text: "живемо", correct: false },
+                    { text: "живете", correct: false }
+                ]
+            },
+            {
+                level: "A1",
+                question: "Який колір називається «жовтий»?",
+                options: [
+                    { text: "Жёлтый", correct: true },
+                    { text: "Зелёный", correct: false },
+                    { text: "Синий", correct: false },
+                    { text: "Красный", correct: false }
+                ]
+            },
+
+            // --- A2 (6-10) ---
+            {
+                level: "A2",
+                question: "Оберіть правильний прийменник: «Я їду ... роботу автобусом».",
+                options: [
+                    { text: "на", correct: true },
+                    { text: "в", correct: false },
+                    { text: "до", correct: false },
+                    { text: "за", correct: false }
+                ]
+            },
+            {
+                level: "A2",
+                question: "Що означає слово «лікарня»?",
+                options: [
+                    { text: "Больница", correct: true },
+                    { text: "Аптека", correct: false },
+                    { text: "Лекарство", correct: false },
+                    { text: "Врач", correct: false }
+                ]
+            },
+            {
+                level: "A2",
+                question: "Поставте слово у правильну форму: «У мене немає ... (час)».",
+                options: [
+                    { text: "часу", correct: true },
+                    { text: "часа", correct: false },
+                    { text: "часом", correct: false },
+                    { text: "часі", correct: false }
+                ]
+            },
+            {
+                level: "A2",
+                question: "Як правильно запитати про вартість товару в магазині?",
+                options: [
+                    { text: "Скільки це коштує?", correct: true },
+                    { text: "Скільки це стоїть?", correct: false },
+                    { text: "Яка ціна коштує?", correct: false },
+                    { text: "Скільки грошей платити?", correct: false }
+                ]
+            },
+            {
+                level: "A2",
+                question: "Оберіть правильну форму майбутнього часу: «Завтра ми ... фільм».",
+                options: [
+                    { text: "дивитимемося", correct: true },
+                    { text: "дивимося", correct: false },
+                    { text: "дивилися", correct: false },
+                    { text: "дивитимуться", correct: false }
+                ]
+            },
+
+            // --- B1 (11-15) ---
+            {
+                level: "B1",
+                question: "Оберіть правильний варіант: «Зустрінемося ... сьомій годині».",
+                options: [
+                    { text: "о", correct: true },
+                    { text: "в", correct: false },
+                    { text: "на", correct: false },
+                    { text: "по", correct: false }
+                ]
+            },
+            {
+                level: "B1",
+                question: "Яке слово є синонімом до «ґречний»?",
+                options: [
+                    { text: "Ввічливий", correct: true },
+                    { text: "Сміливий", correct: false },
+                    { text: "Ледачий", correct: false },
+                    { text: "Хитрун", correct: false }
+                ]
+            },
+            {
+                level: "B1",
+                question: "Узгодьте числівник з іменником: «Ми купили три ...».",
+                options: [
+                    { text: "стілці", correct: false },
+                    { text: "стільці", correct: true },
+                    { text: "стільців", correct: false },
+                    { text: "стільця", correct: false }
+                ]
+            },
+            {
+                level: "B1",
+                question: "Що означає фразеологізм «бити байдики»?",
+                options: [
+                    { text: "Нічого не робити, ледарювати", correct: true },
+                    { text: "Сваритися з кимось", correct: false },
+                    { text: "Важко працювати", correct: false },
+                    { text: "Швидко бігти", correct: false }
+                ]
+            },
+            {
+                level: "B1",
+                question: "Оберіть правильний варіант перекладу «скучать по дому»:",
+                options: [
+                    { text: "сумувати за домом", correct: true },
+                    { text: "сумувати по дому", correct: false },
+                    { text: "скучати за домом", correct: false },
+                    { text: "нудьгувати по хаті", correct: false }
+                ]
+            },
+
+            // --- B2 (16-20) ---
+            {
+                level: "B2",
+                question: "Виберіть правильну форму кличного відмінка: «Шановний ...!»",
+                options: [
+                    { text: "пане Андрію", correct: true },
+                    { text: "пан Андрій", correct: false },
+                    { text: "пану Андрію", correct: false },
+                    { text: "пане Андріє", correct: false }
+                ]
+            },
+            {
+                level: "B2",
+                question: "Де допущено помилку в утворенні ступеня порівняння прикметника?",
+                options: [
+                    { text: "самий кращий", correct: true },
+                    { text: "найкращий", correct: false },
+                    { text: "більш вдалий", correct: false },
+                    { text: "менш відомий", correct: false }
+                ]
+            },
+            {
+                level: "B2",
+                question: "Яке слово пишеться з літерою «ґ»?",
+                options: [
+                    { text: "а...рус", correct: true },
+                    { text: "...олуб", correct: false },
+                    { text: "...ород", correct: false },
+                    { text: "...одина", correct: false }
+                ]
+            },
+            {
+                level: "B2",
+                question: "Оберіть правильний варіант керування: «Дякую ... за допомогу».",
+                options: [
+                    { text: "вам", correct: true },
+                    { text: "вас", correct: false },
+                    { text: "вами", correct: false },
+                    { text: "до вас", correct: false }
+                ]
+            },
+            {
+                level: "B2",
+                question: "Що означає слово «обіруч»?",
+                options: [
+                    { text: "Обома руками", correct: true },
+                    { text: "Навколо", correct: false },
+                    { text: "Поруч", correct: false },
+                    { text: "Навпроти", correct: false }
+                ]
+            },
+
+            // --- C1 (21-25) ---
+            {
+                level: "C1",
+                question: "Замініть кальку «приймати участь» на нормативний український відповідник:",
+                options: [
+                    { text: "брати участь", correct: true },
+                    { text: "вживати участь", correct: false },
+                    { text: "отримувати участь", correct: false },
+                    { text: "мати участь", correct: false }
+                ]
+            },
+            {
+                level: "C1",
+                question: "У якому реченні правильно вжито дієприкметниковий зворот (без невластивих українській мові активних форм на -учий/-ючий)?",
+                options: [
+                    { text: "Працівники, які знають іноземну мову, отримають надбавку.", correct: true },
+                    { text: "Знаючі іноземну мову працівники отримають надбавку.", correct: false },
+                    { text: "Працюючі в офісі люди втомилися.", correct: false },
+                    { text: "Бажаючі виступити підняли руки.", correct: false }
+                ]
+            },
+            {
+                level: "C1",
+                question: "Що означає фразеологізм «накивати п’ятами»?",
+                options: [
+                    { text: "Швидко втекти", correct: true },
+                    { text: "Дуже злякатися", correct: false },
+                    { text: "Образитися на когось", correct: false },
+                    { text: "Заснути на ходу", correct: false }
+                ]
+            },
+            {
+                level: "C1",
+                question: "Оберіть правильний варіант написання за чинним правописом (2019 року):",
+                options: [
+                    { text: "проєкт", correct: true },
+                    { text: "проект", correct: false },
+                    { text: "проієкт", correct: false },
+                    { text: "проэкт", correct: false }
+                ]
+            },
+            {
+                level: "C1",
+                question: "Яке значення має прислівник «нашвидкуруч»?",
+                options: [
+                    { text: "Поспіхом, недбало, на швидку руку", correct: true },
+                    { text: "Власноруч, без сторонньої допомоги", correct: false },
+                    { text: "Дуже вправно й майстерно", correct: false },
+                    { text: "Несподівано для всіх", correct: false }
+                ]
+            },
+
+            // --- C2 (26-30) ---
+            {
+                level: "C2",
+                question: "Що означає західноукраїнський діалектизм «філіжанка»?",
+                options: [
+                    { text: "Невелика чашка (зазвичай для кави)", correct: true },
+                    { text: "Глибока тарілка для юшки", correct: false },
+                    { text: "Дерев'яна ложка", correct: false },
+                    { text: "Вишитий рушник", correct: false }
+                ]
+            },
+            {
+                level: "C2",
+                question: "Яке точне значення має застаріле слово «легіт» у художній літературі?",
+                options: [
+                    { text: "Легкий приємний вітерець", correct: true },
+                    { text: "Ранковий туман над річкою", correct: false },
+                    { text: "Шум гірського потоку", correct: false },
+                    { text: "Світанок", correct: false }
+                ]
+            },
+            {
+                level: "C2",
+                question: "Що означає фразеологізм «ловити ґав»?",
+                options: [
+                    { text: "Бути неуважним, марнувати час", correct: true },
+                    { text: "Полювати на птахів", correct: false },
+                    { text: "Шукати виправдання", correct: false },
+                    { text: "Потрапити в халепу", correct: false }
+                ]
+            },
+            {
+                level: "C2",
+                question: "Оберіть тонкий стилістичний синонім до слова «базікати» з відтінком марнослів’я:",
+                options: [
+                    { text: "теревенити", correct: true },
+                    { text: "промовляти", correct: false },
+                    { text: "мовити", correct: false },
+                    { text: "сповіщати", correct: false }
+                ]
+            },
+            {
+                level: "C2",
+                question: "Що означає слово «непереливки» у виразі «Йому довелося непереливки»?",
+                options: [
+                    { text: "Скрутно, важко, погано", correct: true },
+                    { text: "Весело, безтурботно", correct: false },
+                    { text: "Байдуже", correct: false },
+                    { text: "Несподівано приємно", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let levelStats = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+
+        function startTest() {
+            currentQuestionIndex = 0;
+            score = 0;
+            levelStats = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            const total = questions.length;
+            document.getElementById('progress-indicator').innerText = `Питання ${currentQuestionIndex + 1} із ${total}`;
+            document.getElementById('level-badge').innerText = `Рівень ${q.level}`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 transition duration-200 text-slate-700 font-medium cursor-pointer';
+                btn.innerText = opt.text;
+                btn.dataset.correct = opt.correct;
+                btn.onclick = () => selectOption(btn, opt.correct);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedBtn, isCorrect) {
+            const buttons = document.getElementById('options-container').children;
+            const q = questions[currentQuestionIndex];
+
+            if (isCorrect) {
+                score++;
+                levelStats[q.level]++;
+            }
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                buttons[i].classList.remove('hover:border-indigo-500', 'hover:bg-indigo-50/50');
+                if (buttons[i].dataset.correct === "true") {
+                    buttons[i].classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'font-semibold');
+                } else if (buttons[i] === selectedBtn && !isCorrect) {
+                    buttons[i].classList.add('bg-rose-50', 'border-rose-500', 'text-rose-900');
+                }
+            }
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.innerText = currentQuestionIndex === questions.length - 1 ? 'Показати результати' : 'Наступне питання';
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let determinedLevel = "A1";
+            let description = "";
+
+            if (score <= 5) {
+                determinedLevel = "A1 (Початковий)";
+                description = "Ви знайомі з базовими привітаннями та найпростішими словами. Чудова відправна точка для вивчення граматики та розширення словникового запасу.";
+            } else if (score <= 10) {
+                determinedLevel = "A2 (Елементарний)";
+                description = "Ви впевнено справляєтеся з побутовими темами, розумієте прості конструкції та базові відмінкові форми.";
+            } else if (score <= 16) {
+                determinedLevel = "B1 (Середній)";
+                description = "Добрий практичний рівень: ви розумієте стійкі вислови, орієнтуєтеся в узгодженні слів і можете підтримати розмову.";
+            } else if (score <= 22) {
+                determinedLevel = "B2 (Вище середнього)";
+                description = "Сильне володіння мовою: ви знаєте тонкощі кличного відмінка, ступенів порівняння та уникаєте типових помилок.";
+            } else if (score <= 27) {
+                determinedLevel = "C1 (Просунутий)";
+                description = "Високий рівень: ви відчуваєте стилістику, володієте актуальним правописом і впевнено розпізнаєте мовні калькки.";
+            } else {
+                determinedLevel = "C2 (Вільне володіння)";
+                description = "Блискучий результат! Ви вільно орієнтуєтеся в тонких смислових відтінках, діалектизмах, фразеології та літературній лексиці на рівні носія.";
+            }
+
+            document.getElementById('result-level').innerText = determinedLevel;
+            document.getElementById('result-score').innerText = `Загальний результат: ${score} із ${questions.length}`;
+            document.getElementById('result-description').innerText = description;
+
+            const breakdownContainer = document.getElementById('breakdown-container');
+            breakdownContainer.innerHTML = '';
+            Object.entries(levelStats).forEach(([lvl, pts]) => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center';
+                card.innerHTML = `<span class="font-bold text-slate-700">${lvl}</span><span class="text-sm font-semibold ${pts === 5 ? 'text-emerald-600' : 'text-slate-600'}">${pts} / 5</span>`;
+                breakdownContainer.appendChild(card);
+            });
+        }
+
+        function restartTest() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
